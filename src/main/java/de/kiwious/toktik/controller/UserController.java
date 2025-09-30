@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
 @CrossOrigin(origins = "http://localhost:3000")
+@RestController
 public class UserController {
     private final UserService userService;
 
@@ -24,7 +24,6 @@ public class UserController {
 
     @PostMapping("/user")
     public User post(@RequestBody User user) {
-        System.out.println("NIGGGER");
         return userService.create(user);
     }
 

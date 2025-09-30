@@ -5,7 +5,6 @@ import de.kiwious.toktik.model.Video;
 import de.kiwious.toktik.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -20,8 +19,11 @@ public class UserService {
 
     public User create(User user) {
         return userRepository.insert(user);
-
     }
+
+    /*public User getOrCreateUser() {
+
+    }*/
 
     public User getById(String id) {
         return userRepository.findById(id).orElseThrow(() -> new NullPointerException(String.format("user not found by id %s", id)));
@@ -65,5 +67,14 @@ public class UserService {
         videoService.likeVideo(videoId);
 
         userRepository.save(user);
+    }
+
+    public User getOrCreate(String discordId, String displayName) {
+        return userRepository.findByDiscordId(discordId).orElseGet(() -> {
+            User newUser = new User();
+            newUser.setDiscordId(discordId);
+            newUser.setHandle(displayName);
+            return userRepository.save(newUser);
+        });
     }
 }

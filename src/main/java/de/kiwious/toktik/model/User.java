@@ -18,6 +18,7 @@ import java.util.List;
 public class User implements Serializable {
     @Id
     private String id;
+    private String discordId;
 
     @CreatedDate
     private Date creationDate;

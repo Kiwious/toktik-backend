@@ -8,24 +8,21 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-
-@Document(collection = "videos")
-@Getter @Setter @NoArgsConstructor
-public class Video implements Serializable {
+@Getter
+@Setter
+@NoArgsConstructor
+@Document(collection = "comments")
+public class Comment implements Serializable {
     @Id
     private String id;
 
     @CreatedDate
     private Date creationDate;
 
+    private String videoId;
     private User author;
-    private String description;
+    private String content;
     private int likes;
-    private List<Comment> comments = new ArrayList<>();
-    private String url;
-    private String s3Key;
 }
