@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class VideoService {
@@ -82,5 +84,21 @@ public class VideoService {
     public List<Comment> getComments(String id) {
         Video video = videoRepository.findById(id).orElseThrow(() -> new RuntimeException("No video found"));
         return video.getComments();
+    }
+
+    public List<String> getAllIds() {
+        List<String> ids = videoRepository.findAll()
+                .stream()
+                .map(video -> video.getId())
+                .collect(Collectors.toList());
+        Collections.reverse(ids);
+        return ids;
+    }
+
+    public Video getVideoById(String videoId) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new RuntimeException("No video found"));
+        video.setUrl(s3Service.generatePresignedUrl(video.getS3Key(), Duration.ofHours(1)));
+        return video;
     }
 }
