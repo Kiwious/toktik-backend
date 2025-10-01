@@ -3,6 +3,7 @@ package de.kiwious.toktik.service;
 import de.kiwious.toktik.model.User;
 import de.kiwious.toktik.model.Video;
 import de.kiwious.toktik.repository.UserRepository;
+import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,21 +61,22 @@ public class UserService {
         return null;
     }
 
-    public void likeVideo(String userId, String videoId) {
-        User user = getById(userId);
+    public User getPrincipal(Claims claims) {
+        String discordId = claims.get("id").toString();
 
-        user.getLikedVideos().add(videoId);
-        videoService.likeVideo(videoId);
-
-        userRepository.save(user);
+        try {
+            return userRepository.findByDiscordId(discordId).orElseGet(() -> {
+                User newUser = new User();
+                newUser.setDiscordId(discordId);
+                newUser.setHandle(claims.get("username").toString());
+                newUser.setImageUrl(claims.get("avatar").toString());
+                return userRepository.insert(newUser); // insert statt save, wirft sofort Fehler bei Duplikat
+            });
+        } catch (Exception e) {
+            // Falls jemand gleichzeitig einen User eingefügt hat, holen wir ihn jetzt
+            return userRepository.findByDiscordId(discordId)
+                    .orElseThrow(() -> new RuntimeException("Failed to create or retrieve user", e));
+        }
     }
 
-    public User getOrCreate(String discordId, String displayName) {
-        return userRepository.findByDiscordId(discordId).orElseGet(() -> {
-            User newUser = new User();
-            newUser.setDiscordId(discordId);
-            newUser.setHandle(displayName);
-            return userRepository.save(newUser);
-        });
-    }
 }

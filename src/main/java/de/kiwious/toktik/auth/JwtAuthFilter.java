@@ -1,5 +1,7 @@
 package de.kiwious.toktik.auth;
 
+import de.kiwious.toktik.model.User;
+import de.kiwious.toktik.service.UserService;
 import de.kiwious.toktik.util.JWTUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -19,9 +21,11 @@ import java.util.ArrayList;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JWTUtil jWTUtil;
+    private final UserService userService;
 
-    public JwtAuthFilter(JWTUtil jWTUtil) {
+    public JwtAuthFilter(JWTUtil jWTUtil, UserService userService) {
         this.jWTUtil = jWTUtil;
+        this.userService = userService;
     }
 
     @Override
@@ -31,7 +35,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if(token != null && jWTUtil.isTokenValid(token)) {
             Claims claims = jWTUtil.extractClaims(token);
 
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(claims.getSubject(), null, new ArrayList<>());
+            User user = userService.getPrincipal(claims);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
 
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);

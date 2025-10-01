@@ -29,11 +29,13 @@ public class JWTUtil {
 
     public String generateToken(OAuth2User oAuth2User) {
         Map<String, Object> claims = new HashMap<>();
+        String avatarUrl = "https://cdn.discordapp.com/avatars/" + oAuth2User.getAttribute("id") + "/" + oAuth2User.getAttribute("avatar") + ".webp?size=80";
+
         claims.put("id", oAuth2User.getAttribute("id"));
         claims.put("username", oAuth2User.getAttribute("username"));
         claims.put("email", oAuth2User.getAttribute("email"));
         // claims.put("discriminator", oAuth2User.getAttribute("discriminator"));
-        claims.put("avatar", oAuth2User.getAttribute("avatar"));
+        claims.put("avatar", avatarUrl);
 
         return Jwts.builder()
                 .setClaims(claims)
