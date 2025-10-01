@@ -83,4 +83,15 @@ public class VideoService {
         Video video = videoRepository.findById(id).orElseThrow(() -> new RuntimeException("No video found"));
         return video.getComments();
     }
+
+    public List<String> getAllIds() {
+        return videoRepository.findAll().stream().map(video -> video.getId()).toList();
+    }
+
+    public Video getVideoById(String videoId) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> new RuntimeException("No video found"));
+        video.setUrl(s3Service.generatePresignedUrl(video.getS3Key(), Duration.ofHours(1)));
+        return video;
+    }
 }
