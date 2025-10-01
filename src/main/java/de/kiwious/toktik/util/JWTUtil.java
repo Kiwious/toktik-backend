@@ -1,61 +1,78 @@
 package de.kiwious.toktik.util;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+@Component
 public class JWTUtil {
 
-    // 32-byte key for HS256 (256 bits)
-    private static final String SECRET_KEY = "01234567890123456789012345678901";
+    @Value("${jwt.secret}")
+    private String SECRET;
 
-    // Token validity: 1 day
-    private static final long EXPIRATION_MS = 24 * 60 * 60 * 1000;
+    private final Long EXPIRATION = 86400000L;
 
-    private static final SecretKey KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-
-    public static String generateToken(String userId, String username) {
-        try {
-            return Jwts.builder()
-                    .setSubject(userId)
-                    .claim("username", username)
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-                    .signWith(KEY, SignatureAlgorithm.HS256)
-                    .compact();
-        } catch (JwtException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
-    public static String getUserId(String token) {
-        try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(KEY)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            return claims.getSubject();
-        } catch (JwtException | IllegalArgumentException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String generateToken(OAuth2User oAuth2User) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", oAuth2User.getAttribute("id"));
+        claims.put("username", oAuth2User.getAttribute("username"));
+        claims.put("email", oAuth2User.getAttribute("email"));
+        // claims.put("discriminator", oAuth2User.getAttribute("discriminator"));
+        claims.put("avatar", oAuth2User.getAttribute("avatar"));
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(oAuth2User.getAttribute("id"))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    public static boolean validateToken(String token) {
+    public Claims extractClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean isTokenValid(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(KEY)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            e.printStackTrace();
+            Claims claims = extractClaims(token);
+            return claims.getExpiration().after(new Date());
+        } catch (Exception e) {
             return false;
         }
+    }
+
+    public String extractUserId(String token) {
+        return extractClaims(token).getSubject();
+    }
+
+    public String extractTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("auth_token".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

@@ -1,0 +1,76 @@
+package de.kiwious.toktik.controller;
+
+import de.kiwious.toktik.util.JWTUtil;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+    private final JWTUtil jwtUtil;
+
+    public AuthController(JWTUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
+        String token = jwtUtil.extractTokenFromCookie(request);
+
+        if(token == null || !jwtUtil.isTokenValid(token)) {
+            return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
+        }
+
+        Claims claims = jwtUtil.extractClaims(token);
+        return ResponseEntity.ok(claims);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<?> checkAuthStatus(HttpServletRequest request) {
+        String token = jwtUtil.extractTokenFromCookie(request);
+        Map<String, Object> status = new HashMap<>();
+
+        boolean authenticated = token != null && jwtUtil.isTokenValid(token);
+
+        status.put("authenticated", authenticated);
+
+        if (!authenticated) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(status);
+        }
+
+        status.put("user", jwtUtil.extractClaims(token));
+        return ResponseEntity.ok(status);
+
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        // Methode 1: Cookie mit leeren Wert überschreiben
+        Cookie cookie = new Cookie("auth_token", "");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false); // In Production auf true setzen
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // Sofort löschen
+        // WICHTIG: Domain NICHT setzen für localhost!
+        // cookie.setDomain("localhost"); // <- Diese Zeile entfernen!
+
+        response.addCookie(cookie);
+
+        // Methode 2: Zusätzlich Set-Cookie Header manuell setzen (fallback)
+        response.setHeader("Set-Cookie",
+                "auth_token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax");
+
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    }
+}
