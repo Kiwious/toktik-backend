@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class VideoService {
@@ -85,7 +87,12 @@ public class VideoService {
     }
 
     public List<String> getAllIds() {
-        return videoRepository.findAll().stream().map(video -> video.getId()).toList();
+        List<String> ids = videoRepository.findAll()
+                .stream()
+                .map(video -> video.getId())
+                .collect(Collectors.toList());
+        Collections.reverse(ids);
+        return ids;
     }
 
     public Video getVideoById(String videoId) {
