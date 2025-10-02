@@ -67,7 +67,7 @@ public class VideoService {
         videoRepository.save(video);
     }
 
-    public void addComment(String videoId, String authorId, String content, User author) {
+    public Video addComment(String videoId, String content, User author) {
         Comment comment = new Comment();
         comment.setVideoId(videoId);
         comment.setContent(content);
@@ -77,7 +77,7 @@ public class VideoService {
 
         video.getComments().add(comment);
 
-        videoRepository.save(video);
+        return videoRepository.save(video);
         // commentService.addComment(comment);
     }
 

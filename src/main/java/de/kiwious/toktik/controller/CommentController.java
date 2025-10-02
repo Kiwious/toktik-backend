@@ -3,6 +3,7 @@ package de.kiwious.toktik.controller;
 import de.kiwious.toktik.dto.CommentDTO;
 import de.kiwious.toktik.model.Comment;
 import de.kiwious.toktik.model.User;
+import de.kiwious.toktik.model.Video;
 import de.kiwious.toktik.service.VideoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,9 +24,9 @@ public class CommentController {
 
     // TODO: infer user from auth
     @PostMapping("/{id}")
-    public ResponseEntity<Void> newComment(@PathVariable String id, @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal User principal) {
-        videoService.addComment(id, commentDTO.getAuthorId(), commentDTO.getContent(), principal);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Video> newComment(@PathVariable String id, @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal User principal) {
+        Video video = videoService.addComment(id, commentDTO.getContent(), principal);
+        return ResponseEntity.ok(video);
     }
 
     @GetMapping("/{id}")
