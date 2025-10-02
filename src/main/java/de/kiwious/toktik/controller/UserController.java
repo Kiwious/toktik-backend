@@ -4,6 +4,7 @@ import de.kiwious.toktik.model.User;
 import de.kiwious.toktik.model.Video;
 import de.kiwious.toktik.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,5 +48,10 @@ public class UserController {
     @DeleteMapping("/user")
     public void deleteAll() {
         userService.deleteAll();
+    }
+
+    @GetMapping("/user/me")
+    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(user);
     }
 }

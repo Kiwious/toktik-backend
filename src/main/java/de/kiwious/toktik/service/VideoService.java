@@ -26,8 +26,9 @@ public class VideoService {
         this.s3Service = s3Service;
     }
 
-    public Video create(Video video, String s3Key) {
+    public Video create(Video video, String s3Key, User author) {
         video.setS3Key(s3Key);
+        video.setAuthor(author);
         return videoRepository.insert(video);
     }
 

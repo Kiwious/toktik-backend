@@ -70,13 +70,11 @@ public class UserService {
                 newUser.setDiscordId(discordId);
                 newUser.setHandle(claims.get("username").toString());
                 newUser.setImageUrl(claims.get("avatar").toString());
-                return userRepository.insert(newUser); // insert statt save, wirft sofort Fehler bei Duplikat
+                return userRepository.insert(newUser);
             });
         } catch (Exception e) {
-            // Falls jemand gleichzeitig einen User eingefügt hat, holen wir ihn jetzt
             return userRepository.findByDiscordId(discordId)
                     .orElseThrow(() -> new RuntimeException("Failed to create or retrieve user", e));
         }
     }
-
 }

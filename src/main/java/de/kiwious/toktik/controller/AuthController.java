@@ -41,15 +41,8 @@ public class AuthController {
         String token = jwtUtil.extractTokenFromCookie(request);
         Map<String, Object> status = new HashMap<>();
 
-        boolean authenticated = token != null && jwtUtil.isTokenValid(token);
+        status.put("authenticated", token != null && jwtUtil.isTokenValid(token));
 
-        status.put("authenticated", authenticated);
-
-        if (!authenticated) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(status);
-        }
-
-        status.put("user", jwtUtil.extractClaims(token));
         return ResponseEntity.ok(status);
 
     }
