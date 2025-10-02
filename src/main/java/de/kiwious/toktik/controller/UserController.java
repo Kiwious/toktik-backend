@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @GetMapping("/user/video/{id}")
-    public Video getVideoForUser(@PathVariable String id) {
-        return userService.getAndMarkVideoAsWatched(id);
+    public List<Video> getVideoForUser(@PathVariable String id) {
+        return userService.getCreatedVideos(id);
     }
 
     @PostMapping("/user")
@@ -54,4 +54,5 @@ public class UserController {
     public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(user);
     }
+
 }

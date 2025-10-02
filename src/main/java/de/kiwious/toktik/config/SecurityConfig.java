@@ -4,6 +4,7 @@ import de.kiwious.toktik.auth.JwtAuthFilter;
 import de.kiwious.toktik.auth.Oauth2AuthSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,6 +36,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/login**", "/error", "/oauth2/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/video/**").permitAll()
                         .requestMatchers("/**").authenticated()
                         .anyRequest().permitAll()
                 )

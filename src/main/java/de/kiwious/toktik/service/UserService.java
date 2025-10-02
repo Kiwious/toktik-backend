@@ -3,6 +3,7 @@ package de.kiwious.toktik.service;
 import de.kiwious.toktik.model.User;
 import de.kiwious.toktik.model.Video;
 import de.kiwious.toktik.repository.UserRepository;
+import de.kiwious.toktik.repository.VideoRepository;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,12 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final VideoService videoService;
+    private final VideoRepository videoRepository;
 
-    public UserService(UserRepository userRepository, VideoService videoService) {
+    public UserService(UserRepository userRepository, VideoService videoService, VideoRepository videoRepository) {
         this.userRepository = userRepository;
         this.videoService = videoService;
+        this.videoRepository = videoRepository;
     }
 
     public User create(User user) {
@@ -76,5 +79,9 @@ public class UserService {
             return userRepository.findByDiscordId(discordId)
                     .orElseThrow(() -> new RuntimeException("Failed to create or retrieve user", e));
         }
+    }
+
+    public List<Video> getCreatedVideos(String id) {
+        return videoRepository.findByAuthorId(id);
     }
 }

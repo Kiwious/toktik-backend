@@ -57,13 +57,6 @@ public class VideoController {
     @GetMapping("/video/{id}")
     public Video get(@PathVariable String id) { return videoService.getVideoById(id); }
 
-    // TODO: implement put endpoint
-    @PutMapping("/video/{id}")
-    public Video put(@PathVariable String id, @RequestBody Video updatedVideo) {
-        Video video = videoService.get(id);
-        return updatedVideo;
-    }
-
     @GetMapping("/video/ids")
     public List<String> getIds() {
         return videoService.getAllIds();
