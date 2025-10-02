@@ -67,9 +67,8 @@ public class VideoService {
         videoRepository.save(video);
     }
 
-    public void addComment(String videoId, String authorId, String content) {
+    public void addComment(String videoId, String authorId, String content, User author) {
         Comment comment = new Comment();
-        User author = userService.getById(authorId);
         comment.setVideoId(videoId);
         comment.setContent(content);
         comment.setAuthor(author);
