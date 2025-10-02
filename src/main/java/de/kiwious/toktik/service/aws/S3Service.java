@@ -25,26 +25,17 @@ public class S3Service {
     public void upload(String key, File filePath) {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(BUCKET_NAME)
-                .key(key)
+                .key("videos/" + key)
                 .build();
 
         s3Client.putObject(putObjectRequest, RequestBody.fromFile(filePath));
     }
 
-    /*public void download(String key, String downloadPath) {
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(BUCKET_NAME)
-                .key(key)
-                .build();
-
-        Path path = Paths.get(downloadPath);
-        s3Client.getObject(getObjectRequest, path);
-    }*/
-
     public String generatePresignedUrl(String key, Duration validDuration) {
+        System.out.println("key: "+key);
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(BUCKET_NAME)
-                .key(key)
+                .key("videos/" + key)
                 .build();
 
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
