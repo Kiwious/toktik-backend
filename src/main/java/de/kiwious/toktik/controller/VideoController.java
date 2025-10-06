@@ -5,7 +5,6 @@ import de.kiwious.toktik.model.user.User;
 import de.kiwious.toktik.model.video.Video;
 import de.kiwious.toktik.service.FileUploadService;
 import de.kiwious.toktik.service.VideoService;
-import de.kiwious.toktik.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,12 +18,10 @@ import java.util.List;
 public class VideoController {
     private final VideoService videoService;
     private final FileUploadService fileUploadService;
-    private final JWTUtil jwtUtil;
 
-    public VideoController(VideoService videoService, FileUploadService fileUploadService, JWTUtil jwtUtil) {
+    public VideoController(VideoService videoService, FileUploadService fileUploadService) {
         this.videoService = videoService;
         this.fileUploadService = fileUploadService;
-        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/video")
@@ -49,10 +46,10 @@ public class VideoController {
     }
 
     @GetMapping("/video/{id}")
-    public Video get(@PathVariable String id) { return videoService.getVideoById(id); }
+    public Video get(@PathVariable Long id) { return videoService.getVideoById(id); }
 
     @GetMapping("/video/ids")
-    public List<String> getIds() {
+    public List<Long> getIds() {
         return videoService.getAllIds();
     }
 

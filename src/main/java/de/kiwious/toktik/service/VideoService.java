@@ -29,7 +29,7 @@ public class VideoService {
     public Video create(Video video, String s3Key, User author) {
         video.setS3Key(s3Key);
         video.setAuthor(author);
-        return videoRepository.insert(video);
+        return videoRepository.save(video);
     }
 
     public List<Video> getAll() {
@@ -41,11 +41,11 @@ public class VideoService {
     }
 
 
-    public Video get(String videoId) {
+    public Video get(Long videoId) {
         return videoRepository.findById(videoId).orElseThrow(() -> new RuntimeException("No video found"));
     }
 
-    public List<Video> getUnwatchedVideos(String userId) {
+    /*public List<Video> getUnwatchedVideos(String userId) {
         User user = userService.getById(userId);
         List<Video> videos = videoRepository.findAll();
 
@@ -55,39 +55,39 @@ public class VideoService {
                 .stream()
                 .filter(video -> !watched.contains(video.getId()))
                 .toList();
-    }
+    }*/
 
     public void deleteAll() {
         videoRepository.deleteAll();
     }
 
-    public void likeVideo(String videoId) {
+    public void likeVideo(Long videoId) {
         Video video = get(videoId);
         video.setLikes(video.getLikes() + 1);
         videoRepository.save(video);
     }
 
-    public Video addComment(String videoId, String content, User author) {
+    public Video addComment(Long videoId, String content, User author) {
         Comment comment = new Comment();
-        comment.setVideoId(videoId);
+        comment.setId(videoId);
         comment.setContent(content);
         comment.setAuthor(author);
 
         Video video = videoRepository.findById(videoId).orElseThrow(() -> new RuntimeException("Video not found"));
 
-        video.getComments().add(comment);
+         video.getComments().add(comment);
 
         return videoRepository.save(video);
         // commentService.addComment(comment);
     }
 
-    public List<Comment> getComments(String id) {
+    public List<Comment> getComments(Long id) {
         Video video = videoRepository.findById(id).orElseThrow(() -> new RuntimeException("No video found"));
         return video.getComments();
     }
 
-    public List<String> getAllIds() {
-        List<String> ids = videoRepository.findAll()
+    public List<Long> getAllIds() {
+        List<Long> ids = videoRepository.findAll()
                 .stream()
                 .map(video -> video.getId())
                 .collect(Collectors.toList());
@@ -95,7 +95,7 @@ public class VideoService {
         return ids;
     }
 
-    public Video getVideoById(String videoId) {
+    public Video getVideoById(Long videoId) {
         Video video = videoRepository.findById(videoId)
                 .orElseThrow(() -> new RuntimeException("No video found"));
         video.setUrl(s3Service.generatePresignedUrl(video.getS3Key(), Duration.ofHours(1)));

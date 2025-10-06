@@ -18,7 +18,7 @@ public class UserController {
     }
 
     @GetMapping("/user/video/{id}")
-    public List<Video> getVideoForUser(@PathVariable String id) {
+    public List<Video> getVideoForUser(@PathVariable Long id) {
         return userService.getCreatedVideos(id);
     }
 
@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
-    public User getById(@PathVariable String id) {
+    public User getById(@PathVariable Long id) {
         return userService.getById(id);
     }
 
@@ -39,7 +39,7 @@ public class UserController {
 
     // delete
     @DeleteMapping("/user/{id}")
-    public ResponseEntity<String> delete(@PathVariable String id) {
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.ok("User deleted");
     }

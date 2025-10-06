@@ -1,32 +1,36 @@
 package de.kiwious.toktik.model.video;
 
 import de.kiwious.toktik.model.user.User;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
-@Document(collection = "videos")
 @Getter @Setter @NoArgsConstructor
+@Entity
+@Table(name = "videos")
 public class Video implements Serializable {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @CreatedDate
+    @CreationTimestamp
     private Date creationDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
     private String description;
     private int likes;
-    private List<Comment> comments = new ArrayList<>();
     private String url;
     private String s3Key;
+
+    public List<Comment> getComments() {
+        return null;
+    }
 }

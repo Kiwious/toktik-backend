@@ -24,13 +24,13 @@ public class CommentController {
 
     // TODO: infer user from auth
     @PostMapping("/{id}")
-    public ResponseEntity<Video> newComment(@PathVariable String id, @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal User principal) {
+    public ResponseEntity<Video> newComment(@PathVariable Long id, @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal User principal) {
         Video video = videoService.addComment(id, commentDTO.getContent(), principal);
         return ResponseEntity.ok(video);
     }
 
     @GetMapping("/{id}")
-    public List<Comment> getCommentsForVideo(@PathVariable String id) {
+    public List<Comment> getCommentsForVideo(@PathVariable Long id) {
         return videoService.getComments(id);
     }
 }

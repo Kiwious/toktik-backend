@@ -2,10 +2,12 @@ package de.kiwious.toktik;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableMongoAuditing
+@EnableJpaRepositories(basePackages = "de.kiwious.toktik.repository")
+@EntityScan(basePackages = "de.kiwious.toktik.model")
 public class ToktikApplication {
 
 	public static void main(String[] args) {

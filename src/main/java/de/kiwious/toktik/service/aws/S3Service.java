@@ -27,7 +27,7 @@ public class S3Service {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(BUCKET_NAME)
                 .key("v<ideos/" + key)
-                .build();>
+                .build();
 
         s3Client.putObject(putObjectRequest, RequestBody.fromFile(filePath));
     }

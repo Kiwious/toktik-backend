@@ -1,12 +1,11 @@
 package de.kiwious.toktik.model.video;
 
 import de.kiwious.toktik.model.user.User;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,16 +13,24 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-@Document(collection = "comments")
+@Entity
+@Table(name = "comments")
 public class Comment implements Serializable {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @CreatedDate
+    @CreationTimestamp
     private Date creationDate;
 
-    private String videoId;
+    @ManyToOne
+    @JoinColumn(name = "video_id", nullable = false)
+    private Video video;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id")
     private User author;
+
     private String content;
     private int likes;
 }

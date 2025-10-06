@@ -22,14 +22,14 @@ public class UserService {
     }
 
     public User create(User user) {
-        return userRepository.insert(user);
+        return userRepository.save(user);
     }
 
     /*public User getOrCreateUser() {
 
     }*/
 
-    public User getById(String id) {
+    public User getById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new NullPointerException(String.format("user not found by id %s", id)));
     }
 
@@ -37,7 +37,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void delete(String id) {
+    public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
@@ -45,14 +45,14 @@ public class UserService {
         userRepository.deleteAll();
     }
 
-    public void addWatchedVideo(String userId, String videoId) {
+    public void addWatchedVideo(Long userId, Long videoId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        user.getWatchedVideos().add(videoId);
+        // user.getWatchedVideos().add(videoId);
 
         userRepository.save(user);
     }
 
-    public Video getAndMarkVideoAsWatched(String userId) {
+    /*public Video getAndMarkVideoAsWatched(String userId) {
         List<Video> unwatchedVideos = videoService.getUnwatchedVideos(userId);
 
         Video video = unwatchedVideos.get(0);
@@ -62,7 +62,7 @@ public class UserService {
         }
 
         return null;
-    }
+    }*/
 
     public User getPrincipal(Claims claims) {
         String discordId = claims.get("id").toString();
@@ -73,7 +73,7 @@ public class UserService {
                 newUser.setDiscordId(discordId);
                 newUser.setHandle(claims.get("username").toString());
                 newUser.setImageUrl(claims.get("avatar").toString());
-                return userRepository.insert(newUser);
+                return userRepository.save(newUser);
             });
         } catch (Exception e) {
             return userRepository.findByDiscordId(discordId)
@@ -81,7 +81,7 @@ public class UserService {
         }
     }
 
-    public List<Video> getCreatedVideos(String id) {
+    public List<Video> getCreatedVideos(Long id) {
         return videoRepository.findByAuthorId(id);
     }
 }

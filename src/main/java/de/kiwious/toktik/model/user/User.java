@@ -1,36 +1,39 @@
 package de.kiwious.toktik.model.user;
 
-import jakarta.persistence.Id;
+import de.kiwious.toktik.model.video.Video;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Document(collection = "users")
+@Entity
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 public class User implements Serializable {
     @Id
-    private String id;
-    @Indexed(unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String discordId;
 
-    @CreatedDate
+    @CreationTimestamp
     private Date creationDate;
 
     private String handle;
     private String displayName;
     private String imageUrl;
-    private List<String> watchedVideos;
-    private List<String> likedVideos;
     private String ip;
+
+    @OneToMany(mappedBy = "author")
+    private List<Video> videos = new ArrayList<>();
 
     /*private List<User> followers;
     private List<User> following; */
