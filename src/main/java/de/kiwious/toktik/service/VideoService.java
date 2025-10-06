@@ -1,8 +1,8 @@
 package de.kiwious.toktik.service;
 
-import de.kiwious.toktik.model.Comment;
-import de.kiwious.toktik.model.User;
-import de.kiwious.toktik.model.Video;
+import de.kiwious.toktik.model.video.Comment;
+import de.kiwious.toktik.model.user.User;
+import de.kiwious.toktik.model.video.Video;
 import de.kiwious.toktik.repository.VideoRepository;
 import de.kiwious.toktik.service.aws.S3Service;
 import org.springframework.context.annotation.Lazy;

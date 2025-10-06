@@ -9,6 +9,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 
 @Service
@@ -44,6 +45,32 @@ public class S3Service {
                 .build();
 
         return s3Presigner.presignGetObject(presignRequest).url().toString();
+    }
+
+    public File generateThumbnail(File video, String outputImagePath) throws IOException, InterruptedException {
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "ffmpeg",
+                "-i", video.getAbsolutePath(),
+                "-ss", "00:00:01",
+                "-vframes", "1",
+                outputImagePath
+        );
+        Process process = processBuilder.start();
+        int exitCode = process.waitFor();
+        if(exitCode != 0) {
+            throw new RuntimeException("Thumbnail creation failed");
+        }
+        return new File(outputImagePath);
+    }
+
+    public void uploadThumbnail(String key, File filePath) {
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(BUCKET_NAME)
+                .key("thumbnails/" + key)
+                .contentType("image/jpeg")
+                .build();
+
+        s3Client.putObject(putObjectRequest, RequestBody.fromFile(filePath));
     }
 }
 

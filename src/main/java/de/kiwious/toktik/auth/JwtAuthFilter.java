@@ -1,6 +1,6 @@
 package de.kiwious.toktik.auth;
 
-import de.kiwious.toktik.model.User;
+import de.kiwious.toktik.model.user.User;
 import de.kiwious.toktik.service.UserService;
 import de.kiwious.toktik.util.JWTUtil;
 import io.jsonwebtoken.Claims;

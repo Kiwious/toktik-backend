@@ -1,5 +1,6 @@
-package de.kiwious.toktik.model;
+package de.kiwious.toktik.model.video;
 
+import de.kiwious.toktik.model.user.User;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

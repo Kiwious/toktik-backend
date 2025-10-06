@@ -1,4 +1,4 @@
-package de.kiwious.toktik.model;
+package de.kiwious.toktik.model.user;
 
 import jakarta.persistence.Id;
 import lombok.Getter;

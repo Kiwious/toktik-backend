@@ -1,13 +1,12 @@
 package de.kiwious.toktik.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.kiwious.toktik.model.User;
-import de.kiwious.toktik.model.Video;
+import de.kiwious.toktik.model.user.User;
+import de.kiwious.toktik.model.video.Video;
 import de.kiwious.toktik.service.FileUploadService;
 import de.kiwious.toktik.service.VideoService;
 import de.kiwious.toktik.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -35,11 +34,7 @@ public class VideoController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("video") String videoJson,
             HttpServletRequest request
-    ) throws IOException {
-
-        String token = jwtUtil.extractTokenFromCookie(request);
-        if(!jwtUtil.isTokenValid(token)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-
+    ) throws IOException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper();
         Video video = objectMapper.readValue(videoJson, Video.class);
         MultipartFile multipartFile = fileUploadService.upload(file);

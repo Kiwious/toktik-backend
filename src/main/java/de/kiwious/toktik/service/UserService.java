@@ -1,7 +1,7 @@
 package de.kiwious.toktik.service;
 
-import de.kiwious.toktik.model.User;
-import de.kiwious.toktik.model.Video;
+import de.kiwious.toktik.model.user.User;
+import de.kiwious.toktik.model.video.Video;
 import de.kiwious.toktik.repository.UserRepository;
 import de.kiwious.toktik.repository.VideoRepository;
 import io.jsonwebtoken.Claims;

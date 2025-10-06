@@ -1,9 +1,9 @@
 package de.kiwious.toktik.controller;
 
 import de.kiwious.toktik.dto.CommentDTO;
-import de.kiwious.toktik.model.Comment;
-import de.kiwious.toktik.model.User;
-import de.kiwious.toktik.model.Video;
+import de.kiwious.toktik.model.video.Comment;
+import de.kiwious.toktik.model.user.User;
+import de.kiwious.toktik.model.video.Video;
 import de.kiwious.toktik.service.VideoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

@@ -1,6 +1,6 @@
 package de.kiwious.toktik.repository;
 
-import de.kiwious.toktik.model.Video;
+import de.kiwious.toktik.model.video.Video;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

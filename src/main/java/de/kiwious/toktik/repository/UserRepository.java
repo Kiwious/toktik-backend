@@ -1,6 +1,6 @@
 package de.kiwious.toktik.repository;
 
-import de.kiwious.toktik.model.User;
+import de.kiwious.toktik.model.user.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
