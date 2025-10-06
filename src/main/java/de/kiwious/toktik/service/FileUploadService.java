@@ -21,11 +21,11 @@ public class FileUploadService {
         s3Service.upload(file.getOriginalFilename(), tempFile);
 
         String thumnailName = file.getOriginalFilename().replace(".mp4", ".jpg");
-        File thumbnailFile = s3Service.generateThumbnail(tempFile, thumnailName);
-        s3Service.uploadThumbnail(thumnailName, thumbnailFile);
+        // File thumbnailFile = s3Service.generateThumbnail(tempFile, thumnailName);
+        // s3Service.uploadThumbnail(thumnailName, thumbnailFile);
 
         tempFile.delete();
-        thumbnailFile.delete();
+        // thumbnailFile.delete();
         return file;
     }
 }

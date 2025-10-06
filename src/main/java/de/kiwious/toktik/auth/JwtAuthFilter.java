@@ -30,19 +30,32 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = jWTUtil.extractTokenFromCookie(request);
+        String token;
+        String authHeader = request.getHeader("authorization");
 
-        if(token != null && jWTUtil.isTokenValid(token)) {
-            Claims claims = jWTUtil.extractClaims(token);
+        System.out.println("[JwtAuthFilter] token: " + authHeader);
 
-            User user = userService.getPrincipal(claims);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (authHeader == null) {
+            authHeader = request.getHeader("authorization");
+        }
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        } else {
+            token = jWTUtil.extractTokenFromCookie(request);
         }
 
+        if(token != null && jWTUtil.isTokenValid(token)) {
+            if (jWTUtil.isTokenValid(token)) {
+                Claims claims = jWTUtil.extractClaims(token);
+                User user = userService.getPrincipal(claims);
+
+                if (user != null) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+        }
         filterChain.doFilter(request, response);
     }
-
 }

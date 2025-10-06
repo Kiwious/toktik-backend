@@ -5,7 +5,6 @@ import de.kiwious.toktik.model.user.User;
 import de.kiwious.toktik.model.video.Video;
 import de.kiwious.toktik.service.FileUploadService;
 import de.kiwious.toktik.service.VideoService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +27,7 @@ public class VideoController {
     public ResponseEntity<Video> post(
             @AuthenticationPrincipal User user,
             @RequestParam("file") MultipartFile file,
-            @RequestParam("video") String videoJson,
-            HttpServletRequest request
+            @RequestParam("video") String videoJson
     ) throws IOException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper();
         Video video = objectMapper.readValue(videoJson, Video.class);

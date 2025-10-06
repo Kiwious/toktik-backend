@@ -4,6 +4,7 @@ import de.kiwious.toktik.dto.CommentDTO;
 import de.kiwious.toktik.model.video.Comment;
 import de.kiwious.toktik.model.user.User;
 import de.kiwious.toktik.model.video.Video;
+import de.kiwious.toktik.service.CommentService;
 import de.kiwious.toktik.service.VideoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,20 +18,22 @@ import java.util.List;
 public class CommentController {
 
     private final VideoService videoService;
+    private final CommentService commentService;
 
-    public CommentController(VideoService videoService) {
+    public CommentController(VideoService videoService, CommentService commentService) {
         this.videoService = videoService;
+        this.commentService = commentService;
     }
 
-    // TODO: infer user from auth
     @PostMapping("/{id}")
-    public ResponseEntity<Video> newComment(@PathVariable Long id, @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal User principal) {
-        Video video = videoService.addComment(id, commentDTO.getContent(), principal);
-        return ResponseEntity.ok(video);
+    public ResponseEntity<Comment> newComment(@PathVariable Long id, @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal User principal) {
+        System.out.println("Adding comment to video ID: " + id + " by user: " + principal.getId());
+        Comment comment = videoService.addComment(id, commentDTO.getContent(), principal);
+        return ResponseEntity.ok(comment);
     }
 
     @GetMapping("/{id}")
     public List<Comment> getCommentsForVideo(@PathVariable Long id) {
-        return videoService.getComments(id);
+        return commentService.getCommentsForVideo(id);
     }
 }

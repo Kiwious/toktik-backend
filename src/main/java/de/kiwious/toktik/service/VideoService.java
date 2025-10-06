@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 public class VideoService {
     private final VideoRepository videoRepository;
 
-    private final UserService userService;
     private final S3Service s3Service;
+    private final CommentService commentService;
 
-    public VideoService(VideoRepository videoRepository, @Lazy UserService userService, S3Service s3Service) {
+    public VideoService(VideoRepository videoRepository, S3Service s3Service, CommentService commentService) {
         this.videoRepository = videoRepository;
-        this.userService = userService;
+        this.commentService = commentService;
         this.s3Service = s3Service;
     }
 
@@ -67,23 +67,14 @@ public class VideoService {
         videoRepository.save(video);
     }
 
-    public Video addComment(Long videoId, String content, User author) {
+    public Comment addComment(Long videoId, String content, User author) {
+        Video video = videoRepository.findById(videoId).orElseThrow(() -> new RuntimeException("Video not found"));
         Comment comment = new Comment();
-        comment.setId(videoId);
         comment.setContent(content);
         comment.setAuthor(author);
+        comment.setVideo(video);
 
-        Video video = videoRepository.findById(videoId).orElseThrow(() -> new RuntimeException("Video not found"));
-
-         video.getComments().add(comment);
-
-        return videoRepository.save(video);
-        // commentService.addComment(comment);
-    }
-
-    public List<Comment> getComments(Long id) {
-        Video video = videoRepository.findById(id).orElseThrow(() -> new RuntimeException("No video found"));
-        return video.getComments();
+        return commentService.addComment(comment);
     }
 
     public List<Long> getAllIds() {

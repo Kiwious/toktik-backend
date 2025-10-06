@@ -6,6 +6,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,25 +25,37 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
+    private String resolveToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return jwtUtil.extractTokenFromCookie(request);
+    }
+
     @GetMapping("/user")
     public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
-        String token = jwtUtil.extractTokenFromCookie(request);
-
+        String token = resolveToken(request);
         if(token == null || !jwtUtil.isTokenValid(token)) {
             return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
         }
-
         Claims claims = jwtUtil.extractClaims(token);
         return ResponseEntity.ok(claims);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> me(Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Unauthorized"));
+        }
+        return ResponseEntity.ok(authentication.getPrincipal());
+    }
+
     @GetMapping("/status")
     public ResponseEntity<?> checkAuthStatus(HttpServletRequest request) {
-        String token = jwtUtil.extractTokenFromCookie(request);
+        String token = resolveToken(request);
         Map<String, Object> status = new HashMap<>();
-
         status.put("authenticated", token != null && jwtUtil.isTokenValid(token));
-
         return ResponseEntity.ok(status);
 
     }

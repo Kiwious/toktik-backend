@@ -4,21 +4,27 @@ import de.kiwious.toktik.model.user.User;
 import de.kiwious.toktik.model.video.Video;
 import de.kiwious.toktik.repository.UserRepository;
 import de.kiwious.toktik.repository.VideoRepository;
+import de.kiwious.toktik.util.JWTUtil;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final VideoService videoService;
     private final VideoRepository videoRepository;
+    private final JWTUtil jWTUtil;
 
-    public UserService(UserRepository userRepository, VideoService videoService, VideoRepository videoRepository) {
+    public UserService(UserRepository userRepository, VideoRepository videoRepository, JWTUtil jWTUtil) {
         this.userRepository = userRepository;
-        this.videoService = videoService;
         this.videoRepository = videoRepository;
+        this.jWTUtil = jWTUtil;
     }
 
     public User create(User user) {
