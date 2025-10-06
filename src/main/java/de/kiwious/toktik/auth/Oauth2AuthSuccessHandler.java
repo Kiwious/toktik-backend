@@ -17,10 +17,11 @@ public class Oauth2AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHand
     private final JWTUtil jwtUtil;
 
     @Value("${app.oauth2.redirect-uri:http://localhost:3000}")
-    private String REDIRECT_URI;
+    private String REDIRECT_URI = "http://217.234.136.61:3000";
 
     public Oauth2AuthSuccessHandler(JWTUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
+        System.out.println("REDIRECT_URI: " + REDIRECT_URI);
     }
 
     @Override

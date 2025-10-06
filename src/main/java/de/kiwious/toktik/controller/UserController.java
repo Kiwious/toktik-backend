@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class UserController {
     private final UserService userService;
@@ -49,10 +48,4 @@ public class UserController {
     public void deleteAll() {
         userService.deleteAll();
     }
-
-    @GetMapping("/user/me")
-    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(user);
-    }
-
 }
